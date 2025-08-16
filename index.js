@@ -440,9 +440,11 @@ app.use((req, res) => {
 app.listen(PORT, () => {
     console.log('🚀 Enhanced Product Expiration Monitor started successfully!');
     console.log(`📡 Server running on http://localhost:${PORT}`);
-    console.log('⏰ Enhanced cron jobs scheduled:');
+    console.log('⏰ Comprehensive cron jobs scheduled:');
+    console.log('   - Morning health check: Daily at 8:00 AM');
     console.log('   - 7-day expiration check: Daily at 9:00 AM');
     console.log('   - Tomorrow expiration check: Daily at 6:00 PM');
+    console.log('   - Evening meal planning: Daily at 7:00 PM');
     console.log('   - Test checks with recipes: Every 2 minutes');
     console.log('📊 API endpoints available at /api/products');
     console.log('🍳 Recipe suggestions available at /api/recipes');
@@ -456,6 +458,9 @@ app.listen(PORT, () => {
     console.log('   ✅ Recipe database with 50+ recipes');
     console.log('   ✅ Manual alert triggers');
     console.log('   ✅ Alert statistics and analytics');
+    console.log('   ✅ Daily inventory health reports');
+    console.log('   ✅ Weekly meal planning suggestions');
+    console.log('   ✅ Automated recipe recommendations');
 });
 
 // Graceful shutdown

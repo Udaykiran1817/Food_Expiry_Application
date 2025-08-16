@@ -69,6 +69,7 @@ class AlertService {
         console.log('=' .repeat(80));
         console.log(`📊 Found ${products.length} product(s) ${alertType === 'tomorrow' ? 'expiring tomorrow' : 'expiring within 7 days'}`);
         console.log(`💰 Total value at risk: $${this.calculateTotalValue(products).toFixed(2)}`);
+        console.log(`📧 Alert sent at: ${new Date().toLocaleString()}`);
         console.log('');
         
         // Product details
@@ -98,6 +99,19 @@ class AlertService {
                 console.log(`   🛒 Ingredients: ${recipe.ingredients.join(', ')}`);
                 console.log('');
             });
+            
+            // Daily meal planning suggestions
+            if (alertType === '7-day') {
+                console.log('📅 WEEKLY MEAL PLANNING:');
+                console.log('-' .repeat(80));
+                console.log('💡 Suggested meal schedule using expiring products:');
+                
+                const mealPlan = this.generateWeeklyMealPlan(products, recipes);
+                mealPlan.forEach((day, index) => {
+                    console.log(`   Day ${index + 1}: ${day.meal} using ${day.products.join(', ')}`);
+                });
+                console.log('');
+            }
         }
         
         // Action recommendations
@@ -109,12 +123,14 @@ class AlertService {
             console.log('   • Prepare recipes using these ingredients');
             console.log('   • Consider donating if quantities are large');
             console.log('   • Remove expired items from inventory');
+            console.log('   • Check recipe suggestions above for quick meal ideas');
         } else {
             console.log('📋 PLAN AHEAD:');
             console.log('   • Schedule meals using these products');
             console.log('   • Check if products can be frozen');
             console.log('   • Consider bulk cooking and meal prep');
             console.log('   • Review ordering patterns to reduce waste');
+            console.log('   • Use the weekly meal plan suggestions above');
         }
         
         console.log('=' .repeat(80));
@@ -122,6 +138,36 @@ class AlertService {
         console.log('');
     }
 
+    generateWeeklyMealPlan(products, recipes) {
+        const mealPlan = [];
+        const usedRecipes = new Set();
+        
+        // Sort products by expiration date (most urgent first)
+        const sortedProducts = products.sort((a, b) => new Date(a.expiration_date) - new Date(b.expiration_date));
+        
+        for (let day = 0; day < 7 && day < sortedProducts.length; day++) {
+            const product = sortedProducts[day];
+            const availableRecipes = recipes.filter(r => 
+                r.forProduct === product.name && !usedRecipes.has(r.name)
+            );
+            
+            if (availableRecipes.length > 0) {
+                const recipe = availableRecipes[0];
+                usedRecipes.add(recipe.name);
+                mealPlan.push({
+                    meal: recipe.name,
+                    products: [product.name]
+                });
+            } else {
+                mealPlan.push({
+                    meal: `Quick ${product.category} dish`,
+                    products: [product.name]
+                });
+            }
+        }
+        
+        return mealPlan;
+    }
     calculateTotalValue(products) {
         return products.reduce((total, product) => {
             return total + (product.price * product.quantity);
