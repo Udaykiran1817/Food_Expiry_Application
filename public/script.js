@@ -96,7 +96,7 @@ class ProductExpirationMonitor {
             const response = await fetch('/api/products');
             const data = await response.json();
             
-            if (data.success) {
+            if (data && data.success) {
                 this.products = data.data;
                 this.filterProducts();
                 this.updateSummaryCards();
@@ -122,7 +122,7 @@ class ProductExpirationMonitor {
             
             if (!matchesSearch) return false;
             
-            const daysLeft = this.getDaysUntilExpiration(product.expiration_date);
+            const daysLeft = this.getDaysUntilExpiration(product.expirationDate);
             
             switch (this.currentFilter) {
                 case 'tomorrow':
@@ -163,7 +163,7 @@ class ProductExpirationMonitor {
                         <strong>${this.escapeHtml(product.name)}</strong>
                     </td>
                     <td>${this.escapeHtml(product.category)}</td>
-                    <td>${this.formatDate(product.expiration_date)}</td>
+                    <td>${this.formatDate(product.expirationDate)}</td>
                     <td>
                         <span class="days-left ${daysLeft < 0 ? 'expired' : daysLeft <= 1 ? 'urgent' : daysLeft <= 7 ? 'warning' : 'good'}">
                             ${daysLeft < 0 ? `${Math.abs(daysLeft)} days ago` : daysLeft === 0 ? 'Today' : `${daysLeft} days`}
@@ -193,9 +193,9 @@ class ProductExpirationMonitor {
     }
 
     updateSummaryCards() {
-        const tomorrow = this.products.filter(p => this.getDaysUntilExpiration(p.expiration_date) === 1).length;
+        const tomorrow = this.products.filter(p => this.getDaysUntilExpiration(p.expirationDate) === 1).length;
         const week = this.products.filter(p => {
-            const days = this.getDaysUntilExpiration(p.expiration_date);
+            const days = this.getDaysUntilExpiration(p.expirationDate);
             return days >= 0 && days <= 7;
         }).length;
         const total = this.products.length;
@@ -338,7 +338,7 @@ class ProductExpirationMonitor {
             // Fill form with product data
             document.getElementById('productName').value = product.name;
             document.getElementById('productCategory').value = product.category;
-            document.getElementById('expirationDate').value = product.expiration_date;
+            document.getElementById('expirationDate').value = product.expirationDate;
             document.getElementById('quantity').value = product.quantity;
             document.getElementById('price').value = product.price;
         } else {
@@ -363,13 +363,12 @@ class ProductExpirationMonitor {
         const formData = {
             name: document.getElementById('productName').value.trim(),
             category: document.getElementById('productCategory').value,
-            expiration_date: document.getElementById('expirationDate').value,
+            expirationDate: document.getElementById('expirationDate').value,
             quantity: parseInt(document.getElementById('quantity').value),
             price: parseFloat(document.getElementById('price').value)
         };
 
-        // Validation
-        if (!formData.name || !formData.category || !formData.expiration_date || !formData.quantity || !formData.price) {
+        if (!formData.name || !formData.category || !formData.expirationDate || !formData.quantity || !formData.price) {
             this.showToast('Please fill in all fields', 'error');
             return;
         }
