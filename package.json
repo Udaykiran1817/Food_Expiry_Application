@@ -1,0 +1,12 @@
+{
+  "name": "product-expiration-monitor",
+  "version": "1.0.0",
+  "description": "Product Expiration Monitor with Spring Boot backend",
+  "scripts": {
+    "build": "echo 'Building static files...' && mkdir -p dist && cp -r public/* dist/",
+    "start": "echo 'This is a Spring Boot application. Use: mvn spring-boot:run'"
+  },
+  "keywords": ["spring-boot", "inventory", "expiration", "alerts", "recipes"],
+  "author": "",
+  "license": "MIT"
+}
